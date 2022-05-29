@@ -8,18 +8,16 @@ var sheet = workbook.CreateSheet("Sheet A");
 
 
 //Build global styles
-var style = new CellStyleBuilder(workbook)
-                        .SetFont("Areal")
+var style = new ExcelStyle(workbook)
                         .SetFontColor(IndexedColors.Black)
                         .SetBold(true)
-                        .SetBackground(FillPattern.Diamonds, IndexedColors.Green)
+                        .SetBackground(FillPattern.Diamonds, ExcelStyle.IndexedColor(IndexedColors.Green))
                         .Style;
 
-var hyperlink = new CellStyleBuilder(workbook)
-                        .SetFont("Areal")
+var hyperlink = new ExcelStyle(workbook)
                         .SetFontColor(IndexedColors.Blue)
                         .SetBold(true)
-                        .SetBackground(FillPattern.SolidForeground, IndexedColors.White)
+                        .SetBackground(FillPattern.SolidForeground, ExcelStyle.IndexedColor(IndexedColors.White))
                         .Style;
 
 //Defaul default styled and custom styled row values
@@ -53,16 +51,29 @@ sheet.InsertImage(workbook, imageIndex , 0, 1);
 
 //Preset usefull styles
 //SUCCESS
-sheet.GetRow(0).GetCell(0).CellStyle = new CellStyleBuilder(workbook).DefaultSuccess().Style;
+sheet.GetRow(0).GetCell(0).CellStyle = new ExcelStyle(workbook).DefaultSuccess().Style;
 sheet.GetRow(0).GetCell(0).SetCellValue("Success");
 //SUCCESS
-sheet.GetRow(0).GetCell(1).CellStyle = new CellStyleBuilder(workbook).DefaultWarning().Style;
+sheet.GetRow(0).GetCell(1).CellStyle = new ExcelStyle(workbook).DefaultWarning().Style;
 sheet.GetRow(0).GetCell(1).SetCellValue("Warning");
 //SUCCESS
-sheet.GetRow(0).GetCell(2).CellStyle = new CellStyleBuilder(workbook).DefaultError().Style;
+sheet.GetRow(0).GetCell(2).CellStyle = new ExcelStyle(workbook).DefaultError().Style;
 sheet.GetRow(0).GetCell(2).SetCellValue("Error");
 
 
+//Increase first row height
+var firstRow = sheet.GetRow(0);
+firstRow.Height = 30 * 50;
+
+//Center text & set border
+var centerStyle = new ExcelStyle(workbook)
+                        .SetAllignment(HorizontalAlignment.Center, VerticalAlignment.Center) 
+                        .WrapText()
+                        .SetBold(true)
+                        .SetFontSize(20)
+                        .SetBorder(BorderStyle.Thin, BorderStyle.Thick, BorderStyle.SlantedDashDot, BorderStyle.Dotted)
+                        .Style;
+firstRow.GetCell(0).CellStyle = centerStyle;
 
 
 

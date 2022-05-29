@@ -45,5 +45,6 @@ namespace NPOI.Demo
         {
             sheet.SetColumnWidth(columnNum, 256*size);
         }
+
     }
 }
