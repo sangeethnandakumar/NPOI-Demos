@@ -20,7 +20,7 @@ namespace NPOI.Demo
             Style.IsLocked = false;
             font = workbook.CreateFont();
             SetFont(DEFAULT_FONT);
-            SetFontSize(14);
+            SetFontSize(10);
         }
 
         public ExcelStyle DefaultSuccess()
@@ -28,7 +28,7 @@ namespace NPOI.Demo
             return new ExcelStyle(workbook)
                         .SetFontColor(IndexedColors.Green)
                         .SetBold(false)
-                        .SetBackground(FillPattern.SolidForeground, IndexedColor(IndexedColors.LightGreen));
+                        .SetBackground(FillPattern.SolidForeground, IndexedColors.LightGreen);
         }
 
         public ExcelStyle DefaultWarning()
@@ -36,7 +36,7 @@ namespace NPOI.Demo
             return new ExcelStyle(workbook)
                         .SetFontColor(IndexedColors.Black)
                         .SetBold(false)
-                        .SetBackground(FillPattern.SolidForeground, IndexedColor(IndexedColors.LightYellow));
+                        .SetBackground(FillPattern.SolidForeground, IndexedColors.LightYellow);
         }
 
         public ExcelStyle DefaultError()
@@ -44,7 +44,7 @@ namespace NPOI.Demo
             return new ExcelStyle(workbook)
                         .SetFontColor(IndexedColors.Red)
                         .SetBold(false)
-                        .SetBackground(FillPattern.SolidForeground, IndexedColor(IndexedColors.DarkRed));
+                        .SetBackground(FillPattern.SolidForeground, IndexedColors.DarkRed);
         }
 
         public ExcelStyle SetFont(string fontName)
@@ -81,20 +81,28 @@ namespace NPOI.Demo
             return this;
         }
 
-        public ExcelStyle SetAllignment(HorizontalAlignment homrizontal, VerticalAlignment vertical)
+        public ExcelStyle SetAllignment(HorizontalAlignment horizontal, VerticalAlignment vertical)
         {
-            Style.Alignment = homrizontal;
+            Style.Alignment = horizontal;
             Style.VerticalAlignment = vertical;
             return this;
         }
 
-        public ExcelStyle SetBackground(FillPattern pattern, XSSFColor color)
+        public ExcelStyle SetBackground(FillPattern pattern, IndexedColors color)
         {
             Style.FillPattern = pattern;
             Style.FillForegroundColor = color.Index;
             return this;
-        } 
-        
+        }
+
+        public ExcelStyle SetBackground(FillPattern pattern, Color color)
+        {
+            Style.FillPattern = pattern;
+            Style.FillForegroundXSSFColor = new XSSFColor(color);
+            return this;
+        }
+
+
         public ExcelStyle SetBorder(BorderStyle left, BorderStyle top, BorderStyle right, BorderStyle bottom)
         {
             Style.BorderLeft = left;
@@ -113,12 +121,7 @@ namespace NPOI.Demo
             return this;
         }
 
-        public static XSSFColor RGBColor(int r, int g, int b)
-        {
-            return new XSSFColor(Color.FromArgb(r, g, b));
-        }
-
-        public static XSSFColor IndexedColor(IndexedColors color)
+        public static XSSFColor FromColor(Color color)
         {
             return new XSSFColor(color);
         }

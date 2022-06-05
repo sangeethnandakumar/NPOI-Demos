@@ -3,6 +3,33 @@ using NPOI.Demo;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
+
+var stats = new List<Statitics> {
+    new Statitics {
+        CatageoryId = Guid.NewGuid(),
+        JobName = "Job 1",
+        CatageoryName = "Astro-Physics",
+        Date = DateTime.Now,
+        Started = DateTime.Now,
+        Ended = DateTime.Now.AddHours(4),
+        AmazonStartPage=1,
+        AmazonEndPage=220,
+        ScrapHeroQuotasUsed=200,
+       TotalScrapped=1000,
+       Duplicates=300,
+       Blacklisted=25,
+       Above20MBSize=25,
+       Above150KRank=25,
+       ScrapHeroError=25,
+       BookNotInZLib=25,
+    }
+};
+
+
+Demo.MakeExcelFile(stats);
+
+Environment.Exit(0);
+
 var workbook = new XSSFWorkbook();
 var sheet = workbook.CreateSheet("Sheet A");
 
@@ -11,13 +38,13 @@ var sheet = workbook.CreateSheet("Sheet A");
 var style = new ExcelStyle(workbook)
                         .SetFontColor(IndexedColors.Black)
                         .SetBold(true)
-                        .SetBackground(FillPattern.Diamonds, ExcelStyle.IndexedColor(IndexedColors.Green))
+                        .SetBackground(FillPattern.Diamonds, IndexedColors.Green)
                         .Style;
 
 var hyperlink = new ExcelStyle(workbook)
                         .SetFontColor(IndexedColors.Blue)
                         .SetBold(true)
-                        .SetBackground(FillPattern.SolidForeground, ExcelStyle.IndexedColor(IndexedColors.White))
+                        .SetBackground(FillPattern.SolidForeground, IndexedColors.White)
                         .Style;
 
 //Defaul default styled and custom styled row values
@@ -46,7 +73,7 @@ byte[] data = File.ReadAllBytes(@"C:\Users\Sangeeth Nandakumar\OneDrive\Desktop\
 var imageIndex = workbook.LoadImage(data, PictureType.PNG);
 
 //Insert image from workbook by image index
-sheet.InsertImage(workbook, imageIndex , 0, 1);
+sheet.InsertImage(workbook, imageIndex, 0, 1);
 
 
 //Preset usefull styles
@@ -67,7 +94,7 @@ firstRow.Height = 30 * 50;
 
 //Center text & set border
 var centerStyle = new ExcelStyle(workbook)
-                        .SetAllignment(HorizontalAlignment.Center, VerticalAlignment.Center) 
+                        .SetAllignment(HorizontalAlignment.Center, VerticalAlignment.Center)
                         .WrapText()
                         .SetBold(true)
                         .SetFontSize(20)

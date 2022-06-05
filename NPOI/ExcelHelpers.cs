@@ -15,6 +15,18 @@ namespace NPOI.Demo
                 cell.SetCellValue(values[i]);                   
             }
         }
+        
+        public static void AddCell(this ISheet sheet, XSSFCellStyle style, int rowNum, int colNum,  string value)
+        {
+            sheet.AddCell(rowNum, colNum, value);
+            sheet.GetRow(rowNum).GetCell(colNum).CellStyle = style;
+        }
+
+        public static void AddCell(this ISheet sheet, int rowNum, int colNum, string value)
+        {
+            sheet.GetRow(rowNum).CreateCell(colNum).SetCellValue(value);
+        }
+
         public static void AddRow(this ISheet sheet, int rowNum, params string[] values)
         {
             var row = sheet.CreateRow(rowNum);
