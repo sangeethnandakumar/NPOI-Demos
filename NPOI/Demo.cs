@@ -116,47 +116,53 @@ namespace NPOI.Demo
                     sheet.AddRow(primaryStyle, ++rowStart, String.Empty, "Processed", $"{stat.Processed} ({stat.TotalScrapped} - {stat.Duplicates})");
                     sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
 
-                    sheet.AddRow(successStyle, ++rowStart, String.Empty, "[SUCCESS]", $"{stat.Success} (out of {stat.Processed})");
+                    sheet.AddRow(successStyle, ++rowStart, String.Empty, "         ⟶ [SUCCESS]", $"{stat.Success} (out of {stat.Processed})");
                     sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
                     sheet.GetRow(rowStart).GetCell(2).CellStyle = defaultStyle;
 
                     sheet.AddRow(defaultStyle, ++rowStart, String.Empty, "Total Non-Usefull books (Breakdown)", $"{stat.NonUsefull} books");
 
-                    sheet.AddRow(warningStyle, ++rowStart, String.Empty, "          [GENERE BLACKLISTED]", $"{stat.Blacklisted} books");
+                    sheet.AddRow(warningStyle, ++rowStart, String.Empty, "         ⟶ [GENERE BLACKLISTED]", $"{stat.Blacklisted} books");
                     sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
-                    sheet.AddRow(warningStyle, ++rowStart, String.Empty, "          [EPUB ABOVE 20MB]", $"{stat.Above20MBSize} books");
+                    sheet.AddRow(warningStyle, ++rowStart, String.Empty, "         ⟶ [EPUB ABOVE 20MB]", $"{stat.Above20MBSize} books");
                     sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
-                    sheet.AddRow(warningStyle, ++rowStart, String.Empty, "          [EPUB RANK ABOVE 150K]", $"{stat.Above150KRank} books");
+                    sheet.AddRow(warningStyle, ++rowStart, String.Empty, "         ⟶ [EPUB RANK ABOVE 150K]", $"{stat.Above150KRank} books");
                     sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
 
-                    sheet.AddRow(errorsStyle, ++rowStart, String.Empty, "          [SCRAPHERO ERROR]", $"{stat.ScrapHeroError} books");
+                    sheet.AddRow(errorsStyle, ++rowStart, String.Empty, "         ⟶ [SCRAPHERO ERROR]", $"{stat.ScrapHeroError} books");
                     sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
-                    sheet.AddRow(errorsStyle, ++rowStart, String.Empty, "          [BOOK NOT IN ZLIB]", $"{stat.BookNotInZLib} books");
+                    sheet.AddRow(errorsStyle, ++rowStart, String.Empty, "         ⟶ [BOOK NOT IN ZLIB]", $"{stat.BookNotInZLib} books");
                     sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
-                    
+
+
+                    var selection2 = sheet.BoxSelection(rowStart - 5, 1, rowStart-1, 1);
+                    sheet.DrawBorderOnSelection(selection2, BorderCover.AroundSelectionBox, BorderStyle.Double);
+
+                    var selection = sheet.BoxSelection(rowStart - 15, 1, rowStart-1, 1);
+                    sheet.DrawBorderOnSelection(selection, BorderCover.AroundSelectionBox, BorderStyle.DashDot);
+
+                    rowStart += 2;
+
+                    //Set border to selection
+                    //var selecction2 = sheet.BoxSelection("B11", "c17");
+
+
                 }
-            }
 
-            //Set border to selection
-            var selecction2 = sheet.BoxSelection("B11", "c17");
-            sheet.DrawBorderOnSelection(selecction2, BorderCover.AroundSelectionBox, BorderStyle.Dashed);
-            
-            var selecction = sheet.BoxSelection(1,1, 15, 1);
-            sheet.DrawBorderOnSelection(selecction, BorderCover.AroundSelectionBox, BorderStyle.Thin);
-
-            //Writing
-            var xfile = new FileStream("demo1.xlsx", FileMode.Create, FileAccess.Write);
-            workbook.Write(xfile);
-            workbook.Close();
-            xfile.Close();
-            //Opening
-            new Process
-            {
-                StartInfo = new ProcessStartInfo(@"demo1.xlsx")
+                //Writing
+                var xfile = new FileStream("demo1.xlsx", FileMode.Create, FileAccess.Write);
+                workbook.Write(xfile);
+                workbook.Close();
+                xfile.Close();
+                //Opening
+                new Process
                 {
-                    UseShellExecute = true
-                }
-            }.Start();
+                    StartInfo = new ProcessStartInfo(@"demo1.xlsx")
+                    {
+                        UseShellExecute = true
+                    }
+                }.Start();
+            }
         }
     }
 }

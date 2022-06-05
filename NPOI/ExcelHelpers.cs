@@ -24,75 +24,80 @@ namespace NPOI.Demo
             for (var i = range.Item1.Row; i < range.Item2.Row+1; i++)
             {
                 var row = sheet.GetRow(i);
-                for (var j = range.Item1.Col; j < range.Item2.Col+1; j++)
+                if(row is not null)
                 {
-                    XSSFCellStyle clonedStyle;
-                    var cell = row.GetCell(j);
 
-                    var currentCellStyle = cell?.CellStyle as XSSFCellStyle;
-                    if (currentCellStyle is null)
+                    for (var j = range.Item1.Col; j < range.Item2.Col + 1; j++)
                     {
-                        clonedStyle = new ExcelStyle((XSSFWorkbook)sheet.Workbook).DefaultSuccess().Style;
+                        XSSFCellStyle clonedStyle;
+                        var cell = row.GetCell(j);
+
+                        var currentCellStyle = cell?.CellStyle as XSSFCellStyle;
+                        if (currentCellStyle is null)
+                        {
+                            clonedStyle = new ExcelStyle((XSSFWorkbook)sheet.Workbook).DefaultSuccess().Style;
+                        }
+                        else
+                        {
+                            clonedStyle = currentCellStyle.Clone() as XSSFCellStyle;
+                        }
+
+
+                        //Outerbox
+                        if (borderCover == BorderCover.AroundSelectionBox)
+                        {
+                            if (i == range.Item1.Row && j == range.Item1.Col)
+                            {
+                                clonedStyle.BorderLeft = borderStyle;
+                                clonedStyle.BorderTop = borderStyle;
+                            }
+                            else if (j == range.Item2.Col && i == range.Item1.Row)
+                            {
+                                clonedStyle.BorderTop = borderStyle;
+                                clonedStyle.BorderRight = borderStyle;
+                            }
+                            else if (i == range.Item1.Row)
+                            {
+                                clonedStyle.BorderTop = borderStyle;
+                            }
+
+
+                            if (i == range.Item2.Row && j == range.Item2.Col)
+                            {
+                                clonedStyle.BorderBottom = borderStyle;
+                            }
+                            else if (j == range.Item1.Col && i == range.Item2.Row)
+                            {
+                                clonedStyle.BorderBottom = borderStyle;
+                            }
+                            else if (i == range.Item2.Row)
+                            {
+                                clonedStyle.BorderBottom = borderStyle;
+                            }
+
+
+                            if (j == range.Item1.Col)
+                            {
+                                clonedStyle.BorderLeft = borderStyle;
+                            }
+
+                            if (j == range.Item2.Col)
+                            {
+                                clonedStyle.BorderRight = borderStyle;
+                            }
+                        }
+
+
+
+                        if (cell is null)
+                        {
+                            row.CreateCell(j);
+                            cell = row.GetCell(j);
+                        }
+                        cell.CellStyle = clonedStyle;
                     }
-                    else
-                    {
-                        clonedStyle = currentCellStyle.Clone() as XSSFCellStyle;
-                    }
-
-
-                    //Outerbox
-                    if (borderCover == BorderCover.AroundSelectionBox)
-                    {
-                        if(i== range.Item1.Row && j == range.Item1.Col)
-                        {
-                            clonedStyle.BorderLeft = borderStyle;
-                            clonedStyle.BorderTop = borderStyle;
-                        }
-                        else if (j == range.Item2.Col && i == range.Item1.Row)
-                        {
-                            clonedStyle.BorderTop = borderStyle;
-                            clonedStyle.BorderRight = borderStyle;
-                        }
-                        else if (i == range.Item1.Row)
-                        {
-                            clonedStyle.BorderTop = borderStyle;
-                        }
-
-
-                        if (i == range.Item2.Row && j == range.Item2.Col)
-                        {
-                            clonedStyle.BorderBottom = borderStyle;
-                        }
-                        else if (j == range.Item1.Col && i == range.Item2.Row)
-                        {
-                            clonedStyle.BorderBottom = borderStyle;
-                        }
-                        else if (i == range.Item2.Row)
-                        {
-                            clonedStyle.BorderBottom = borderStyle;
-                        }
-
-                        
-                        if (j == range.Item1.Col)
-                        {
-                            clonedStyle.BorderLeft = borderStyle;
-                        }
-
-                        if (j == range.Item2.Col)
-                        {
-                            clonedStyle.BorderRight = borderStyle;
-                        }                        
-                    }
-
-
-
-                    if (cell is null)
-                    {
-                        row.CreateCell(j);
-                        cell = row.GetCell(j);
-                    }
-                    cell.CellStyle = clonedStyle;
                 }
+
             }
         }
 
@@ -124,13 +129,18 @@ namespace NPOI.Demo
 
         public static void AddCell(this ISheet sheet, XSSFCellStyle style, int rowNum, int colNum, string value)
         {
-            sheet.AddCell(rowNum, colNum, value);
+            AddCell(sheet, rowNum, colNum, value);
             sheet.GetRow(rowNum).GetCell(colNum).CellStyle = style;
         }
 
         public static void AddCell(this ISheet sheet, int rowNum, int colNum, string value)
         {
-            sheet.GetRow(rowNum).CreateCell(colNum).SetCellValue(value);
+            var row = sheet.GetRow(rowNum);
+            if(row == null)
+            {
+                row = sheet.CreateRow(rowNum);
+            }       
+            row.CreateCell(colNum).SetCellValue(value);
         }
 
         public static void AddRow(this ISheet sheet, int rowNum, params string[] values)
