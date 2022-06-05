@@ -52,13 +52,44 @@ namespace NPOI.Demo
               .SetFont("Calibri")
               .SetFontSize(12)
               .SetAllignment(HorizontalAlignment.Left, VerticalAlignment.Center)
-              .SetFontColor(IndexedColors.White)
+              .SetFontColor(IndexedColors.Black)
               .SetBold(true)
-              .SetBackground(FillPattern.SolidForeground, Color.Purple)
+              .SetBackground(FillPattern.SolidForeground, Color.FromArgb(217, 225, 242))
               .Style;
 
+            var defaultStyle = new ExcelStyle(workbook)
+              .SetFont("Calibri")
+              .SetFontSize(12)
+              .SetAllignment(HorizontalAlignment.Left, VerticalAlignment.Center)
+              .SetFontColor(IndexedColors.Black)
+              .SetBold(true)
+              .SetBackground(FillPattern.NoFill, Color.White)
+              .Style;
+
+            var primaryStyle = new ExcelStyle(workbook)
+             .SetFont("Calibri")
+             .SetFontSize(12)
+             .SetAllignment(HorizontalAlignment.Left, VerticalAlignment.Center)
+             .SetFontColor(IndexedColors.Black)
+             .SetBold(true)
+             .SetBackground(FillPattern.SolidForeground, Color.FromArgb(255, 230, 153))
+             .Style;
+
+            var secondaryStyle = new ExcelStyle(workbook)
+                .SetFont("Calibri")
+                .SetFontSize(12)
+                .SetAllignment(HorizontalAlignment.Left, VerticalAlignment.Center)
+                .SetFontColor(IndexedColors.Black)
+                .SetBold(true)
+                .SetBackground(FillPattern.Squares, Color.FromArgb(255, 230, 153))
+                .Style;
+
+            var successStyle = new ExcelStyle(workbook).DefaultSuccess().Style;
+            var warningStyle = new ExcelStyle(workbook).DefaultWarning().Style;
+            var errorsStyle = new ExcelStyle(workbook).DefaultError().Style;
+
             sheet.ColumnWidth(0, 30);
-            sheet.ColumnWidth(1, 50);
+            sheet.ColumnWidth(1, 40);
             sheet.ColumnWidth(2, 50);
 
             //Data
@@ -70,10 +101,48 @@ namespace NPOI.Demo
                 sheet.AddRow(catageoryHeader, rowStart, group.Key);
                 foreach (var stat in group)
                 {
-                    sheet.AddCell(statHeader, rowStart, 1, $"{stat.JobName} {stat.Started}");
+                    sheet.AddCell(statHeader, rowStart, 1, $"{stat.JobName} - [{stat.Started}]");
                     sheet.AddCell(statHeader, rowStart, 2, String.Empty);
+                    sheet.AddRow(defaultStyle, ++rowStart, String.Empty, "Started", stat.Started.ToString());
+                    sheet.AddRow(defaultStyle, ++rowStart, String.Empty, "Ended", stat.Ended.ToString());
+                    sheet.AddRow(defaultStyle, ++rowStart, String.Empty, "Duration", stat.Duration.ToString());
+                    sheet.AddRow(defaultStyle, ++rowStart, String.Empty, "Amazon Pages reached", $"{stat.AmazonStartPage} ⟶ {stat.AmazonEndPage}");
+                    sheet.AddRow(defaultStyle, ++rowStart, String.Empty, "ScrapHero Quotas Used", stat.ScrapHeroQuotasUsed.ToString());
+
+                    sheet.AddRow(secondaryStyle, ++rowStart, String.Empty, "Total Scrapped", stat.TotalScrapped.ToString());
+                    sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
+
+                    sheet.AddRow(defaultStyle, ++rowStart, String.Empty, "Duplicates", stat.Duplicates.ToString());
+                    sheet.AddRow(primaryStyle, ++rowStart, String.Empty, "Processed", $"{stat.Processed} ({stat.TotalScrapped} - {stat.Duplicates})");
+                    sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
+
+                    sheet.AddRow(successStyle, ++rowStart, String.Empty, "[SUCCESS]", $"{stat.Success} (out of {stat.Processed})");
+                    sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
+                    sheet.GetRow(rowStart).GetCell(2).CellStyle = defaultStyle;
+
+                    sheet.AddRow(defaultStyle, ++rowStart, String.Empty, "Total Non-Usefull books (Breakdown)", $"{stat.NonUsefull} books");
+
+                    sheet.AddRow(warningStyle, ++rowStart, String.Empty, "          [GENERE BLACKLISTED]", $"{stat.Blacklisted} books");
+                    sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
+                    sheet.AddRow(warningStyle, ++rowStart, String.Empty, "          [EPUB ABOVE 20MB]", $"{stat.Above20MBSize} books");
+                    sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
+                    sheet.AddRow(warningStyle, ++rowStart, String.Empty, "          [EPUB RANK ABOVE 150K]", $"{stat.Above150KRank} books");
+                    sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
+
+                    sheet.AddRow(errorsStyle, ++rowStart, String.Empty, "          [SCRAPHERO ERROR]", $"{stat.ScrapHeroError} books");
+                    sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
+                    sheet.AddRow(errorsStyle, ++rowStart, String.Empty, "          [BOOK NOT IN ZLIB]", $"{stat.BookNotInZLib} books");
+                    sheet.GetRow(rowStart).GetCell(0).CellStyle = defaultStyle;
+                    
                 }
             }
+
+            //Set border to selection
+            var selecction2 = sheet.BoxSelection("B11", "c17");
+            sheet.DrawBorderOnSelection(selecction2, BorderCover.AroundSelectionBox, BorderStyle.Dashed);
+            
+            var selecction = sheet.BoxSelection(1,1, 15, 1);
+            sheet.DrawBorderOnSelection(selecction, BorderCover.AroundSelectionBox, BorderStyle.Thin);
 
             //Writing
             var xfile = new FileStream("demo1.xlsx", FileMode.Create, FileAccess.Write);

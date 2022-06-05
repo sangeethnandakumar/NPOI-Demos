@@ -30,6 +30,14 @@ namespace NPOI.Demo
                         .SetBold(false)
                         .SetBackground(FillPattern.SolidForeground, IndexedColors.LightGreen);
         }
+        public ExcelStyle DefaultStyle()
+        {
+            return new ExcelStyle(workbook)
+                        .SetFontColor(IndexedColors.Green)
+                        .SetBold(false)
+                        .SetBackground(FillPattern.NoFill, IndexedColors.White);
+        }
+
 
         public ExcelStyle DefaultWarning()
         {
@@ -44,7 +52,7 @@ namespace NPOI.Demo
             return new ExcelStyle(workbook)
                         .SetFontColor(IndexedColors.Red)
                         .SetBold(false)
-                        .SetBackground(FillPattern.SolidForeground, IndexedColors.DarkRed);
+                        .SetBackground(FillPattern.SolidForeground, Color.FromArgb(255, 199, 206));
         }
 
         public ExcelStyle SetFont(string fontName)
